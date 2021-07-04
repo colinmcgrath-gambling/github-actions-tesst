@@ -1,14 +1,27 @@
-on: push
+name: Context
+on: 
+  [push, pull_request]
 
 jobs:
+  functions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump
+        run: | 
+          echo ${{ contains( 'hello', 'll' ) }}
+          echo ${{ startsWith( 'hello', 'he' ) }}
+          echo ${{ endsWith( 'hello', 'lo' ) }}
+          echo ${{ format( 'Hello {0} {1} {2}', 'World', '!', '!' ) }}
   one:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
+        run: eccho "$GITHUB_CONTEXT"
       - name: Dump job context
+        if: failure()
         env:
           JOB_CONTEXT: ${{ toJSON(job) }}
         run: echo "$JOB_CONTEXT"
